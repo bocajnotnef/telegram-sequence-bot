@@ -1,0 +1,4 @@
+config.ini
+.*
+!.gitignore
+__pycache__
