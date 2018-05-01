@@ -37,4 +37,4 @@ class TestAlphaSequence():
         
         assert(alpha.validate('A'))
         assert(alpha.validate('B'))
-        assert(alpha.validate('C3'))
+        assert not alpha.validate('C3')

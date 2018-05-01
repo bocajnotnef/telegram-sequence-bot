@@ -29,8 +29,8 @@ class AlphaSequence:
             self.last = AlphaSequence._to_num(new_letters)
             return True
         else:
-            if self.last + 1 == AlphaSequence.to_num(new_letters):
-                self.last = AlphaSequence.to_num(new_letters)
+            if self.last + 1 == AlphaSequence._to_num(new_letters):
+                self.last = AlphaSequence._to_num(new_letters)
                 return True
             else:
                 return False
@@ -76,7 +76,7 @@ class AlphaSequence:
         for i,ch in enumerate(stringput[::-1]):
             if ch not in CAPITAL_LETTERS_SET:
                 return -1
-            val += (CAPITAL_LETTERS.find(ch)+1)*(26**(i))
+            val += (CAPITAL_LETTERS.index(ch)+1)*(26**(i))
         return val
 
 
