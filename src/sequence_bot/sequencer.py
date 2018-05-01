@@ -3,12 +3,14 @@
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
 from telegram.ext import Updater
-from typing import Set
+from typing import Set, Optional
+from ._version import get_versions
 import argparse
 import configparser
 import logging
 import telegram
 
+__version__: str = get_versions()['version']  # type: ignore
 sequence = None
 DICTIONARY: Set[str] = set()
 WATCHING_CHAT = None
@@ -111,11 +113,18 @@ def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--debug', help="enable debugging mode", action="store_true")
+    parser.add_argument('--version', help="output the bot's version and halt.",
+                        action='version',
+                        version=f"Pepper {__version__}")
 
     return parser.parse_args()
 
 
-def main(args: argparse.Namespace):
+def main(args: Optional[argparse.Namespace] = None):
+
+    if not args:
+        args = get_args()
+
     global sequence
     global WATCHING_CHAT
     global RESPONDING_CHAT

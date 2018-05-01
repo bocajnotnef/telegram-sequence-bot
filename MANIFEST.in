@@ -1,0 +1,2 @@
+include versioneer.py
+include src/sequence_bot/_version.py
