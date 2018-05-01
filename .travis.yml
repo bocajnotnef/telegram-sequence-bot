@@ -1,0 +1,26 @@
+language: python
+sudo: false
+cache: pip
+env:
+  global:
+    - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+    - SEGFAULT_SIGNALS=all
+matrix:
+  include:
+    - python: '3.6'
+before_install:
+  - python --version
+  - uname -a
+  - lsb_release -a
+install:
+  - pip install -e .
+  - pip install diff_cover pytest pytest-cov flake8 mypy
+  - virtualenv --version
+  - easy_install --version
+  - pip --version
+script:
+  - git fetch origin master:refs/remotes/origin/master
+  - pytest --cov-report=xml --cov=sequence_bot
+  - diff-cover coverage.xml --compare-branch=origin/master --fail-under=100
+  - diff-quality --compare-branch=origin/master --violations=flake8 --fail-under=100
+  # - make typecheck
