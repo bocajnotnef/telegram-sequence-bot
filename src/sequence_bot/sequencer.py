@@ -17,6 +17,7 @@ WATCHING_CHAT = None
 RESPONDING_CHAT = None
 
 CAPITAL_LETTERS = [chr(c) for c in range(ord('A'), ord('Z') + 1)]
+CAPITAL_LETTERS_SET = set(CAPITAL_LETTERS)
 
 
 class AlphaSequence:
@@ -25,11 +26,11 @@ class AlphaSequence:
 
     def validate(self, new_letters):
         if self.last is None:
-            self.last = new_letters
+            self.last = AlphaSequence._to_num(new_letters)
             return True
         else:
-            if self.get_next(self.last) == new_letters:
-                self.last = new_letters
+            if self.last + 1 == AlphaSequence.to_num(new_letters):
+                self.last = AlphaSequence.to_num(new_letters)
                 return True
             else:
                 return False
@@ -68,6 +69,15 @@ class AlphaSequence:
                 AlphaSequence._letters_to_list(letters)
             )
         ))
+    
+    @staticmethod
+    def _to_num(stringput):
+        val = 0
+        for i,ch in enumerate(stringput[::-1]):
+            if ch not in CAPITAL_LETTERS_SET:
+                return -1
+            val += (CAPITAL_LETTERS.find(ch)+1)*(26**(i))
+        return val
 
 
 def start(bot, update):
