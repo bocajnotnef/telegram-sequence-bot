@@ -38,6 +38,30 @@ DICTIONARY_FILENAME = dictionary.txt
 
 Eventually, we'll store things like insults in there, too
 
+# Testing
+
+## Manual
+
+Install the thing:
+
+```
+pip install -e .
+```
+
+Run the thing __IN DEBUG MODE:__
+
+```
+SequencerBot --debug
+```
+
+If you don't run it in debug mode horrible horrible things will happen.
+
+## Automated
+
+```
+pytest
+```
+
 ## Dictionary
 
 Dictionary pulled in from https://raw.githubusercontent.com/jonbcard/scrabble-bot/master/src/dictionary.txt
