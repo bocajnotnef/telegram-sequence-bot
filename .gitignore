@@ -1,5 +1,6 @@
 config.ini
 .*
+dist
 !.gitignore
 __pycache__
 **.egg-info
