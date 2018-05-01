@@ -69,11 +69,11 @@ class AlphaSequence:
                 AlphaSequence._letters_to_list(letters)
             )
         ))
-    
+
     @staticmethod
     def _to_num(stringput):
         val = 0
-        for i,ch in enumerate(stringput[::-1]):
+        for i, ch in enumerate(stringput[::-1]):
             if ch not in CAPITAL_LETTERS_SET:
                 return -1
             val += (CAPITAL_LETTERS.index(ch)+1)*(26**(i))
