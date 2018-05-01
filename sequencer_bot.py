@@ -3,18 +3,14 @@
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
 from telegram.ext import Updater
+from typing import Set
 import argparse
 import configparser
 import logging
 import telegram
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-BOT_DEBUG_CHAT_ID = int(config['DEFAULT']['BOT_DEBUG_CHAT_ID'])
-LETTERS_META_CHAT = int(config['DEFAULT']['LETTERS_META_CHAT'])
-LETTERS_MAIN_CHAT = int(config['DEFAULT']['LETTERS_MAIN_CHAT'])
-
+sequence = None
+DICTIONARY: Set[str] = set()
 WATCHING_CHAT = None
 RESPONDING_CHAT = None
 
@@ -95,15 +91,17 @@ def validate(bot, update):
     logging.info(f"I am in chat ID {update.message.chat.id}")
     if update.message:
         logging.info(f"{update.effective_user.username}: {update.message.text}")
+        user = update.effective_user.username
 
         if not all([c in CAPITAL_LETTERS for c in update.message.text]):
-            logging.info(f"Wow, {update.effective_user.username} is bad at this.")
-            bot.send_message(RESPONDING_CHAT, f"Geez, @{update.effective_user.username}, at least try to make it look right.")
+            logging.info(f"Wow, {user} is bad at this.")
+            bot.send_message(RESPONDING_CHAT, f"Geez, @{user}, at least try to make it look right.")
         else:
             if sequence.validate(update.message.text):
-                pass
+                if update.message.text in DICTIONARY:
+                    bot.send_message(RESPONDING_CHAT, f"Hey @{user}, that's a scrabble word!")
             else:
-                bot.send_message(RESPONDING_CHAT, f"@{update.effective_user.username} WRONG")
+                bot.send_message(RESPONDING_CHAT, f"@{user} WRONG")
 
     else:
         logging.info("I don't think that was a message..")
@@ -112,7 +110,6 @@ def validate(bot, update):
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('token', help="Telegram API token")
     parser.add_argument('--debug', help="enable debugging mode", action="store_true")
 
     return parser.parse_args()
@@ -122,17 +119,28 @@ def main(args: argparse.Namespace):
     global sequence
     global WATCHING_CHAT
     global RESPONDING_CHAT
+    global DICTIONARY
 
-    myself = telegram.Bot(token=args.token)
-    updater = Updater(token=args.token)
-    dispatcher = updater.dispatcher
+    config_profile = "DEFAULT"
 
     if args.debug:
-        WATCHING_CHAT = BOT_DEBUG_CHAT_ID
-        RESPONDING_CHAT = BOT_DEBUG_CHAT_ID
-    else:
-        WATCHING_CHAT = LETTERS_MAIN_CHAT
-        RESPONDING_CHAT = LETTERS_META_CHAT
+        config_profile = "DEBUG"
+
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+
+    RESPONDING_CHAT = int(config[config_profile]['RESPOND_CHAT'])
+    WATCHING_CHAT = int(config[config_profile]['WATCH_CHAT'])
+    DICTIONARY_FILENAME = config[config_profile]['DICTIONARY_FILENAME']
+    TOKEN = config[config_profile]['TOKEN']
+
+    with open(DICTIONARY_FILENAME, 'r') as dict_file:
+        for line in dict_file.readlines():
+            DICTIONARY.add(line.strip())
+
+    myself = telegram.Bot(token=TOKEN)
+    updater = Updater(token=TOKEN)
+    dispatcher = updater.dispatcher
 
     print(f"Logged in as {myself.get_me()}")
     sequence = AlphaSequence()

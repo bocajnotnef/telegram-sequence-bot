@@ -29,3 +29,7 @@ LETTERS_MAIN_CHAT = -999999997
 ```
 
 Eventually, we'll store things like insults in there, too
+
+## Dictionary
+
+Dictionary pulled in from https://raw.githubusercontent.com/jonbcard/scrabble-bot/master/src/dictionary.txt
