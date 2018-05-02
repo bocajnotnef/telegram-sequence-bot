@@ -3,4 +3,6 @@ config.ini
 dist
 !.gitignore
 __pycache__
+*.html
+*.xml
 **.egg-info
