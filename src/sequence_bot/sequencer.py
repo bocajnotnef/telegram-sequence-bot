@@ -22,15 +22,18 @@ CAPITAL_LETTERS_SET = set(CAPITAL_LETTERS)
 
 class AlphaSequence:
     def __init__(self):
-        self.last = None
+        self.last_letters = None
+        self.last_user = None
 
-    def validate(self, new_letters):
-        if self.last is None:
-            self.last = AlphaSequence._to_num(new_letters)
+    def validate(self, new_letters, user):
+        if self.last_letters is None:
+            self.last_letters = AlphaSequence._to_num(new_letters)
+            self.last_user = user
             return True
         else:
-            if self.last + 1 == AlphaSequence._to_num(new_letters):
-                self.last = AlphaSequence._to_num(new_letters)
+            if self.last_letters + 1 == AlphaSequence._to_num(new_letters) and self.last_user != user: # NOQA
+                self.last_letters = AlphaSequence._to_num(new_letters)
+                self.last_user = user
                 return True
             else:
                 return False
