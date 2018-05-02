@@ -111,7 +111,7 @@ def validate(bot, update):
         else:
             if sequence.validate(update.message.text):
                 if update.message.text in DICTIONARY:
-                    bot.send_message(RESPONDING_CHAT, f"Hey @{user}, "
+                    bot.send_message(RESPONDING_CHAT, f"Hey {user}, "
                                      f"{update.message.text} is a scrabble word!")
             else:
                 bot.send_message(RESPONDING_CHAT, f"@{user} WRONG")
