@@ -59,7 +59,10 @@ setup(
     ],
     extras_require={
         'develop': [
-            'pytest'
+            'pytest',
+            'bunch',
+            'diff-cover',
+            'flake8'
              ]
         # eg:
         #   'rst': ['docutils>=0.11'],

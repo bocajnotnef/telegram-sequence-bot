@@ -42,10 +42,10 @@ Eventually, we'll store things like insults in there, too
 
 ## Manual
 
-Install the thing:
+Install the thing, with dev dependencies:
 
 ```
-pip install -e .
+ pip install -e .[develop]
 ```
 
 Run the thing __IN DEBUG MODE:__
