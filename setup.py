@@ -60,6 +60,7 @@ setup(
     extras_require={
         'develop': [
             'pytest',
+            'pytest-cov',
             'bunch',
             'diff-cover',
             'flake8'
