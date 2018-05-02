@@ -20,58 +20,48 @@ CAPITAL_LETTERS = [chr(c) for c in range(ord('A'), ord('Z') + 1)]
 CAPITAL_LETTERS_SET = set(CAPITAL_LETTERS)
 
 
+class BadMessageFormException(Exception):
+    pass
+
+
+class BadMessageSequenceException(Exception):
+    pass
+
+
 class AlphaSequence:
     def __init__(self):
         self.last_letters = None
         self.last_user = None
 
-    def validate(self, new_letters, user):
+    def validate(self, message_text, user):
+
+        AlphaSequence._validate_message_form(message_text, user)
+        self._validate_message_sequence(message_text, user)
+
+        # import ipdb; ipdb.set_trace()
+
+        if message_text in DICTIONARY:
+            return f"Hey {user}, {message_text} is a scrabble word!"
+
+        return None
+
+    @staticmethod
+    def _validate_message_form(message_text, user):
+        if not all([c in CAPITAL_LETTERS for c in message_text]):
+            logging.info(f"Wow, {user} is bad at this.")
+            raise BadMessageFormException()
+
+    def _validate_message_sequence(self, message_text, user):
         if self.last_letters is None:
-            self.last_letters = AlphaSequence._to_num(new_letters)
+            self.last_letters = AlphaSequence._to_num(message_text)
             self.last_user = user
-            return True
         else:
-            if self.last_letters + 1 == AlphaSequence._to_num(new_letters) and self.last_user != user: # NOQA
-                self.last_letters = AlphaSequence._to_num(new_letters)
+            if self.last_letters + 1 == AlphaSequence._to_num(message_text) and self.last_user != user: # NOQA
+                self.last_letters = AlphaSequence._to_num(message_text)
                 self.last_user = user
                 return True
             else:
-                return False
-
-    @staticmethod
-    def _list_to_letters(list_of_ords):
-        return [chr(l + ord('A')) for l in list_of_ords]
-
-    @staticmethod
-    def _letters_to_list(letters):
-        return [ord(l) - ord('A') for l in letters]
-
-    @staticmethod
-    def _get_next_list(list_of_ords):
-        new_list = []
-        list_of_ords[-1] += 1
-        carry = False
-        for index, entry in enumerate(list_of_ords[::-1]):
-            if carry:
-                new_list.append((entry + 1) % 26)
-                carry = False
-            else:
-                new_list.append((entry + 0) % 26)
-
-            if new_list[-1] == 0 and entry != 0:
-                carry = True
-
-        if carry:
-            new_list.append(0)
-
-        return new_list[::-1]
-
-    def get_next(self, letters):
-        return "".join(str(e) for e in AlphaSequence._list_to_letters(
-            AlphaSequence._get_next_list(
-                AlphaSequence._letters_to_list(letters)
-            )
-        ))
+                raise BadMessageSequenceException()
 
     @staticmethod
     def _to_num(stringput):
@@ -108,16 +98,16 @@ def validate(bot, update):
         logging.info(f"{update.effective_user.username}: {update.message.text}")
         user = update.effective_user.username
 
-        if not all([c in CAPITAL_LETTERS for c in update.message.text]):
-            logging.info(f"Wow, {user} is bad at this.")
+        try:
+            msg = sequence.validate(update.message.text, user)
+
+            if msg is not None:
+                bot.send_message(RESPONDING_CHAT, msg)
+
+        except BadMessageFormException:
             bot.send_message(RESPONDING_CHAT, f"Geez, @{user}, at least try to make it look right.")
-        else:
-            if sequence.validate(update.message.text, user):
-                if update.message.text in DICTIONARY:
-                    bot.send_message(RESPONDING_CHAT, f"Hey {user}, "
-                                     f"{update.message.text} is a scrabble word!")
-            else:
-                bot.send_message(RESPONDING_CHAT, f"@{user} WRONG")
+        except BadMessageSequenceException:
+            bot.send_message(RESPONDING_CHAT, f"@{user} WRONG")
 
     else:
         logging.info("I don't think that was a message..")
