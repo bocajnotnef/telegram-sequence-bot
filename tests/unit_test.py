@@ -6,35 +6,41 @@ class TestAlphaSequence():
     def test_initializing(self):
         alpha = AlphaSequence()
 
-        assert(alpha.last is None)
-        assert(alpha.validate('AAA'))
-        assert(alpha.validate('AAB'))
-        assert not alpha.validate('AAD')
+        assert alpha.last_letters is None
+        assert alpha.validate('AAA', 'TJ')
+        assert alpha.validate('AAB', 'Jake')
+        assert not alpha.validate('AAD', 'TJ')
 
     def test_new_digit(self):
         alpha = AlphaSequence()
 
-        assert(alpha.validate('ZZZ'))
-        assert(alpha.validate('AAAA'))
-        assert(alpha.validate('AAAB'))
+        assert alpha.validate('ZZZ', 'TJ')
+        assert alpha.validate('AAAA', 'Jake')
+        assert alpha.validate('AAAB', 'TJ')
 
     def test_rollover(self):
         alpha = AlphaSequence()
 
-        assert(alpha.validate('AAZ'))
-        assert(alpha.validate('ABA'))
-        assert(alpha.validate('ABB'))
+        assert alpha.validate('AAZ', 'TJ')
+        assert alpha.validate('ABA', 'Jake')
+        assert alpha.validate('ABB', 'TJ')
 
     def test_bad_start(self):
         alpha = AlphaSequence()
 
-        assert(alpha.validate('A'))
-        assert(alpha.validate('B'))
-        assert not alpha.validate('3C')
+        assert alpha.validate('A', 'TJ')
+        assert alpha.validate('B', 'Jake')
+        assert not alpha.validate('3C', 'TJ')
 
     def test_bad_end(self):
         alpha = AlphaSequence()
 
-        assert(alpha.validate('A'))
-        assert(alpha.validate('B'))
-        assert not alpha.validate('C3')
+        assert alpha.validate('A', 'TJ')
+        assert alpha.validate('B', 'Jake')
+        assert not alpha.validate('C3', 'TJ')
+
+    def test_repeat_user(self):
+        alpha = AlphaSequence()
+        assert alpha.validate('A', 'TJ')
+        assert alpha.validate('B', 'Jake')
+        assert not alpha.validate('C', 'Jake')
