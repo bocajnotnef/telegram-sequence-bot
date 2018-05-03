@@ -61,6 +61,7 @@ class AlphaSequence:
                 self.last_user = user
                 return True
             else:
+                self.last_letters = None
                 raise BadMessageSequenceException()
 
     @staticmethod
